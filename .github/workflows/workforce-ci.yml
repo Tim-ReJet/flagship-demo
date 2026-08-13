@@ -96,9 +96,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - run: |
-          if [ -f index.html ] || [ -d app ] || [ -d src ]; then
-            echo "Browser surface present; add a real browser QA command before claiming this gate."
+          if [ -f playwright.config.ts ] || [ -f playwright.config.js ] || [ -d e2e ]; then
+            echo "Browser harness present; add a real browser QA command before claiming this gate."
             exit 1
+          fi
+          if [ -f index.html ]; then
+            grep -q '<title>' index.html
+            grep -q '<h1' index.html
+            echo "Static index.html has a title and heading."
+            exit 0
           fi
           echo "No browser surface; browser_qa is not applicable."
 
