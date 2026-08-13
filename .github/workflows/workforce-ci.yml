@@ -1,0 +1,120 @@
+name: workforce-ci
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+# Job names are the exact Workforce feature-pr-v2 gate set.
+# Documentation-only repositories pass the software gates honestly as
+# "not applicable" rather than inventing a toolchain.
+jobs:
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f tsconfig.json ] || [ -f package.json ]; then
+            echo "TypeScript project present; add a real typecheck command before claiming this gate."
+            exit 1
+          fi
+          echo "No TypeScript project; typecheck is not applicable."
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f package.json ] || [ -f .eslintrc ] || [ -f .eslintrc.cjs ] || [ -f eslint.config.js ] || [ -f eslint.config.mjs ]; then
+            echo "Lint configuration present; add a real lint command before claiming this gate."
+            exit 1
+          fi
+          echo "No linter configured; lint is not applicable."
+
+  unit_tests:
+    name: unit_tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f package.json ] || [ -f pyproject.toml ] || [ -f go.mod ] || [ -f Cargo.toml ]; then
+            echo "Application manifest present; add a real unit test command before claiming this gate."
+            exit 1
+          fi
+          echo "No application manifest; unit_tests are not applicable."
+
+  integration_tests:
+    name: integration_tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -d tests/integration ] || [ -d src ]; then
+            echo "Application or integration tests present; add a real integration command before claiming this gate."
+            exit 1
+          fi
+          echo "No integration surface; integration_tests are not applicable."
+
+  e2e_tests:
+    name: e2e_tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f playwright.config.ts ] || [ -f playwright.config.js ] || [ -d e2e ]; then
+            echo "E2E harness present; add a real e2e command before claiming this gate."
+            exit 1
+          fi
+          echo "No e2e harness; e2e_tests are not applicable."
+
+  browser_qa:
+    name: browser_qa
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f index.html ] || [ -d app ] || [ -d src ]; then
+            echo "Browser surface present; add a real browser QA command before claiming this gate."
+            exit 1
+          fi
+          echo "No browser surface; browser_qa is not applicable."
+
+  sast_scan:
+    name: sast_scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.py' -o -name '*.go' \) ! -path './.git/*' | grep -q .; then
+            echo "Source files present; add a real SAST command before claiming this gate."
+            exit 1
+          fi
+          echo "No source files; sast_scan is not applicable."
+
+  dependency_audit:
+    name: dependency_audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if [ -f package-lock.json ] || [ -f pnpm-lock.yaml ] || [ -f yarn.lock ] || [ -f requirements.txt ] || [ -f go.sum ] || [ -f Cargo.lock ]; then
+            echo "Lockfile present; add a real dependency audit before claiming this gate."
+            exit 1
+          fi
+          echo "No lockfile; dependency_audit is not applicable."
+
+  secret_scan:
+    name: secret_scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          if grep -RInE --exclude-dir=.git 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY-----' .; then
+            echo "Possible secret material found."
+            exit 1
+          fi
+          echo "No high-confidence secret patterns found."
