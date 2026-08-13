@@ -18,18 +18,23 @@
       h1 { max-width: 44rem; margin: .7rem 0 1rem; font-size: clamp(2.3rem, 6vw, 4.5rem); line-height: 1.02; letter-spacing: -.05em; }
       .intro { max-width: 42rem; margin: 0; color: #5c687d; font-size: 1.1rem; line-height: 1.6; }
       .loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.5rem; }
-      .step, .receipt { border: 1px solid #dce3ee; border-radius: 1.1rem; background: #fff; box-shadow: 0 12px 30px #1b31500d; }
+      .step, .receipt, .facts { border: 1px solid #dce3ee; border-radius: 1.1rem; background: #fff; box-shadow: 0 12px 30px #1b31500d; }
       .step { padding: 1.35rem; }
       .number { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 50%; color: #fff; background: #3568d4; font-weight: 800; }
       h2 { margin: 1.1rem 0 .45rem; font-size: 1.2rem; }
       .step p { margin: 0; color: #667287; line-height: 1.5; }
       .status { display: inline-block; margin-top: 1rem; padding: .35rem .65rem; border-radius: 999px; color: #176b4c; background: #e4f7ed; font-size: .78rem; font-weight: 800; }
+      .facts { margin-top: 1rem; padding: 1.35rem; }
+      .facts h2 { margin-top: 0; }
+      .facts dl { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .8rem 1rem; margin: 0; }
+      .facts dt { color: #3568d4; font-weight: 800; }
+      .facts dd { margin: 0; color: #667287; line-height: 1.5; }
       .receipt { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-top: 1rem; padding: 1.25rem 1.35rem; }
       .receipt h2 { margin: 0 0 .35rem; }
       .receipt p { margin: 0; color: #667287; line-height: 1.5; }
       .check { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 50%; color: #176b4c; background: #e4f7ed; font-size: 1.4rem; font-weight: 900; }
       footer { margin-top: 2rem; color: #7a8698; font-size: .85rem; }
-      @media (max-width: 700px) { .loop { grid-template-columns: 1fr; } }
+      @media (max-width: 700px) { .loop { grid-template-columns: 1fr; } .facts dl { grid-template-columns: 1fr; gap: .25rem; } }
     </style>
   </head>
   <body>
@@ -60,6 +65,18 @@
           <p>The completed result is linked to a public artifact that anyone can inspect.</p>
           <span class="status">Evidence attached</span>
         </article>
+      </section>
+
+      <section class="facts" aria-labelledby="facts-heading">
+        <h2 id="facts-heading">Company loop facts</h2>
+        <dl>
+          <dt>Spend</dt>
+          <dd>Spend is leased first.</dd>
+          <dt>GitHub</dt>
+          <dd>GitHub is not mutated until the owner approves a sealed plan.</dd>
+          <dt>Completion</dt>
+          <dd>Completion is a PR plus trusted CI.</dd>
+        </dl>
       </section>
 
       <section class="receipt" aria-label="Completion receipt">
