@@ -1,21 +1,25 @@
 name: workforce-ci
 
+# pull_request_target runs the default-branch workflow against the PR head.
+# Feature-pr-v2 forbids PRs from changing .github/workflows/, so the trusted
+# gates cannot live only on the feature branch. Checkout is read-only and
+# never executes repository code.
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
 
-# Job names are the exact Workforce feature-pr-v2 gate set.
-# Documentation-only repositories pass the software gates honestly as
-# "not applicable" rather than inventing a toolchain.
 jobs:
   typecheck:
     name: typecheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f tsconfig.json ] || [ -f package.json ]; then
             echo "TypeScript project present; add a real typecheck command before claiming this gate."
@@ -28,6 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f package.json ] || [ -f .eslintrc ] || [ -f .eslintrc.cjs ] || [ -f eslint.config.js ] || [ -f eslint.config.mjs ]; then
             echo "Lint configuration present; add a real lint command before claiming this gate."
@@ -40,6 +47,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f package.json ] || [ -f pyproject.toml ] || [ -f go.mod ] || [ -f Cargo.toml ]; then
             echo "Application manifest present; add a real unit test command before claiming this gate."
@@ -52,6 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -d tests/integration ] || [ -d src ]; then
             echo "Application or integration tests present; add a real integration command before claiming this gate."
@@ -64,6 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f playwright.config.ts ] || [ -f playwright.config.js ] || [ -d e2e ]; then
             echo "E2E harness present; add a real e2e command before claiming this gate."
@@ -76,6 +92,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f index.html ] || [ -d app ] || [ -d src ]; then
             echo "Browser surface present; add a real browser QA command before claiming this gate."
@@ -88,6 +107,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if find . -type f \( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.py' -o -name '*.go' \) ! -path './.git/*' | grep -q .; then
             echo "Source files present; add a real SAST command before claiming this gate."
@@ -100,6 +122,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if [ -f package-lock.json ] || [ -f pnpm-lock.yaml ] || [ -f yarn.lock ] || [ -f requirements.txt ] || [ -f go.sum ] || [ -f Cargo.lock ]; then
             echo "Lockfile present; add a real dependency audit before claiming this gate."
@@ -112,6 +137,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - run: |
           if grep -RInE --exclude-dir=.git 'AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY-----' .; then
             echo "Possible secret material found."
