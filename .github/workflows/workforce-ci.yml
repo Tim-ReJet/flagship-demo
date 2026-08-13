@@ -103,7 +103,10 @@ jobs:
           if [ -f index.html ]; then
             grep -q '<title>' index.html
             grep -q '<h1' index.html
-            echo "Static index.html has a title and heading."
+            grep -q 'Lease' index.html
+            grep -q 'Approve' index.html
+            grep -q 'Receipt' index.html
+            echo "Static index.html has title, heading, and Lease/Approve/Receipt labels."
             exit 0
           fi
           echo "No browser surface; browser_qa is not applicable."
