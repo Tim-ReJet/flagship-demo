@@ -32,6 +32,9 @@
       .receipt { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-top: 1rem; padding: 1.25rem 1.35rem; }
       .receipt h2 { margin: 0 0 .35rem; }
       .receipt p { margin: 0; color: #667287; line-height: 1.5; }
+      .receipt-link { display: inline-block; margin-top: .9rem; padding: .7rem 1rem; border-radius: .6rem; color: #fff; background: #3568d4; font-weight: 800; text-decoration: none; }
+      .receipt-link:hover { background: #2855b5; }
+      .receipt-link:focus-visible { outline: 3px solid #9eb9ff; outline-offset: 3px; }
       .check { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 50%; color: #176b4c; background: #e4f7ed; font-size: 1.4rem; font-weight: 900; }
       footer { margin-top: 2rem; color: #7a8698; font-size: .85rem; }
       @media (max-width: 700px) { .loop { grid-template-columns: 1fr; } .facts dl { grid-template-columns: 1fr; gap: .25rem; } }
@@ -83,6 +86,7 @@
         <div>
           <h2>Company loop complete</h2>
           <p>Lease active · approval recorded · public receipt available</p>
+          <a class="receipt-link" href="https://github.com/tim-rejet/flagship-demo/pull/3" target="_blank" rel="noopener noreferrer">Open the receipt</a>
         </div>
         <div class="check" aria-label="Complete">✓</div>
       </section>
