@@ -3,94 +3,548 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Flagship Demo · Company Loop</title>
+    <meta name="description" content="A compiled product knowledge card for Biro: the control plane for autonomous AI companies." />
+    <title>Biro · Product knowledge card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
     <style>
       :root {
+        --paper: #f3ece1;
+        --panel: #faf6ef;
+        --ink: #1a1714;
+        --muted: #5a5248;
+        --rule: #d4c6b4;
+        --accent: #6e2c16;
+        --mark: #101113;
+        --dot: #f7f4ef;
+        --focus: #1a1714;
+        --shadow: 0 24px 48px rgba(26, 23, 20, 0.08);
+        --display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+        --sans: "IBM Plex Sans", "Segoe UI", sans-serif;
+        --mono: "IBM Plex Mono", ui-monospace, monospace;
         color-scheme: light;
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: #172033;
-        background: #f4f7fb;
       }
       * { box-sizing: border-box; }
-      body { margin: 0; min-height: 100vh; }
-      main { width: min(68rem, 100%); margin: 0 auto; padding: 3rem 1.25rem 4rem; }
-      .eyebrow { color: #3568d4; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-      h1 { max-width: 44rem; margin: .7rem 0 1rem; font-size: clamp(2.3rem, 6vw, 4.5rem); line-height: 1.02; letter-spacing: -.05em; }
-      .intro { max-width: 42rem; margin: 0; color: #5c687d; font-size: 1.1rem; line-height: 1.6; }
-      .loop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.5rem; }
-      .step, .receipt, .facts { border: 1px solid #dce3ee; border-radius: 1.1rem; background: #fff; box-shadow: 0 12px 30px #1b31500d; }
-      .step { padding: 1.35rem; }
-      .number { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 50%; color: #fff; background: #3568d4; font-weight: 800; }
-      h2 { margin: 1.1rem 0 .45rem; font-size: 1.2rem; }
-      .step p { margin: 0; color: #667287; line-height: 1.5; }
-      .status { display: inline-block; margin-top: 1rem; padding: .35rem .65rem; border-radius: 999px; color: #176b4c; background: #e4f7ed; font-size: .78rem; font-weight: 800; }
-      .facts { margin-top: 1rem; padding: 1.35rem; }
-      .facts h2 { margin-top: 0; }
-      .facts dl { display: grid; grid-template-columns: minmax(8rem, .35fr) 1fr; gap: .8rem 1rem; margin: 0; }
-      .facts dt { color: #3568d4; font-weight: 800; }
-      .facts dd { margin: 0; color: #667287; line-height: 1.5; }
-      .receipt { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center; margin-top: 1rem; padding: 1.25rem 1.35rem; }
-      .receipt h2 { margin: 0 0 .35rem; }
-      .receipt p { margin: 0; color: #667287; line-height: 1.5; }
-      .receipt-link { display: inline-block; margin-top: .9rem; padding: .7rem 1rem; border-radius: .6rem; color: #fff; background: #3568d4; font-weight: 800; text-decoration: none; }
-      .receipt-link:hover { background: #2855b5; }
-      .receipt-link:focus-visible { outline: 3px solid #9eb9ff; outline-offset: 3px; }
-      .check { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 50%; color: #176b4c; background: #e4f7ed; font-size: 1.4rem; font-weight: 900; }
-      footer { margin-top: 2rem; color: #7a8698; font-size: .85rem; }
-      @media (max-width: 700px) { .loop { grid-template-columns: 1fr; } .facts dl { grid-template-columns: 1fr; gap: .25rem; } }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          radial-gradient(1200px 420px at 8% -10%, rgba(110, 44, 22, 0.07), transparent 55%),
+          linear-gradient(180deg, #efe6d8 0%, var(--paper) 28%, var(--paper) 100%);
+        font-family: var(--sans);
+        font-size: 1.05rem;
+        line-height: 1.65;
+      }
+      a { color: var(--accent); }
+      a:hover { text-decoration-thickness: 2px; }
+      a:focus-visible,
+      .skip:focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 3px;
+      }
+      .skip {
+        position: absolute;
+        left: 1rem;
+        top: -4rem;
+        z-index: 50;
+        padding: 0.65rem 0.9rem;
+        background: var(--ink);
+        color: var(--panel);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .skip:focus { top: 1rem; }
+      .sheet {
+        width: min(72rem, calc(100% - 2rem));
+        margin: 2rem auto 3.5rem;
+        padding: 0;
+        border: 1px solid var(--rule);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      .masthead {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1.1rem;
+        align-items: center;
+        padding: 1.35rem 1.6rem;
+        border-bottom: 1px solid var(--rule);
+      }
+      .brand {
+        display: flex;
+        gap: 0.85rem;
+        align-items: center;
+        min-width: 0;
+        color: inherit;
+        text-decoration: none;
+      }
+      .mark {
+        flex: 0 0 auto;
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+      .wordmark {
+        font-family: var(--display);
+        font-size: 1.7rem;
+        font-weight: 650;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      }
+      .meta {
+        display: grid;
+        justify-items: end;
+        gap: 0.15rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 15.5rem 1fr;
+      }
+      nav {
+        padding: 1.6rem 1.2rem 2rem 1.6rem;
+        border-right: 1px solid var(--rule);
+        background: rgba(243, 236, 225, 0.55);
+      }
+      nav p {
+        margin: 0 0 0.85rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      nav ol {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      nav a {
+        display: flex;
+        min-height: 2.75rem;
+        align-items: center;
+        color: var(--ink);
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+      nav a:hover { color: var(--accent); }
+      nav span {
+        width: 1.6rem;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+      }
+      main { padding: 2rem 2rem 2.4rem; }
+      .eyebrow {
+        margin: 0 0 0.7rem;
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 18ch;
+        margin: 0 0 1rem;
+        font-family: var(--display);
+        font-size: clamp(2.4rem, 5vw, 4.15rem);
+        font-weight: 650;
+        font-optical-sizing: auto;
+        line-height: 1.04;
+        letter-spacing: -0.035em;
+      }
+      .lede {
+        max-width: 42rem;
+        margin: 0 0 1.6rem;
+        color: var(--muted);
+        font-size: 1.18rem;
+      }
+      h2 {
+        margin: 2.4rem 0 0.7rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--rule);
+        font-family: var(--display);
+        font-size: 1.7rem;
+        font-weight: 650;
+        letter-spacing: -0.03em;
+      }
+      h2:first-of-type { margin-top: 0.4rem; }
+      h3 {
+        margin: 1.4rem 0 0.4rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+      p { max-width: 42rem; }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.9rem;
+        margin: 1.4rem 0 0;
+      }
+      .fact {
+        padding: 1rem 1.05rem 1.1rem;
+        border: 1px solid var(--rule);
+        background: var(--paper);
+      }
+      .fact dt {
+        margin: 0 0 0.35rem;
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .fact dd { margin: 0; color: var(--ink); }
+      .catalog {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem 1.25rem;
+        margin: 0.8rem 0 0;
+        padding: 0;
+        list-style: none;
+      }
+      .catalog li {
+        display: grid;
+        gap: 0.15rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--rule);
+      }
+      .catalog strong { font-weight: 600; }
+      .catalog span { color: var(--muted); font-size: 0.92rem; }
+      .loop {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.9rem;
+        margin-top: 1rem;
+      }
+      .step {
+        padding: 1.15rem 1.1rem 1.2rem;
+        border: 1px solid var(--rule);
+        background: var(--paper);
+      }
+      .step .kicker {
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .nots {
+        margin: 0.6rem 0 0;
+        padding-left: 1.1rem;
+      }
+      .nots li { margin: 0.35rem 0; max-width: 42rem; }
+      .start {
+        display: grid;
+        gap: 0.85rem;
+        margin-top: 0.8rem;
+      }
+      pre {
+        margin: 0;
+        overflow: auto;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--rule);
+        background: var(--ink);
+        color: #f4efe6;
+        font-family: var(--mono);
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+      .links a {
+        display: inline-flex;
+        min-height: 2.75rem;
+        align-items: center;
+        padding: 0 0.95rem;
+        border: 1px solid var(--rule);
+        background: var(--paper);
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .links a:hover { border-color: var(--ink); }
+      .sources {
+        margin: 0;
+        padding-left: 1.15rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        justify-content: space-between;
+        padding: 1rem 1.6rem 1.2rem;
+        border-top: 1px solid var(--rule);
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      @media (max-width: 860px) {
+        .masthead, .layout { grid-template-columns: 1fr; }
+        .meta { justify-items: start; }
+        nav {
+          padding-bottom: 0.4rem;
+          border-right: 0;
+          border-bottom: 1px solid var(--rule);
+        }
+        nav ol { display: flex; flex-wrap: wrap; gap: 0 1.1rem; }
+        nav a { min-height: 2.5rem; }
+        main { padding: 1.4rem 1.2rem 1.8rem; }
+        .facts, .loop, .catalog { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+      @media print {
+        body { background: #fff; }
+        .sheet { width: auto; margin: 0; border: 0; box-shadow: none; }
+        nav, .skip { display: none; }
+        a { color: inherit; text-decoration: none; }
+      }
     </style>
   </head>
   <body>
-    <main>
-      <div class="eyebrow">Flagship company loop</div>
-      <h1>From a leased workspace to a verified receipt.</h1>
-      <p class="intro">
-        Workforce keeps the operational handoff visible: lease the capacity, secure approval,
-        and close the loop with a receipt-backed result.
-      </p>
-
-      <section class="loop" aria-label="Company loop stages">
-        <article class="step">
-          <div class="number">1</div>
-          <h2>Leased</h2>
-          <p>Capacity is reserved for the company and ready for the next approved move.</p>
-          <span class="status">Lease active</span>
-        </article>
-        <article class="step">
-          <div class="number">2</div>
-          <h2>Approved</h2>
-          <p>The proposed change is reviewed, authorized, and handed off with clear intent.</p>
-          <span class="status">Approval recorded</span>
-        </article>
-        <article class="step">
-          <div class="number">3</div>
-          <h2>Receipt-backed</h2>
-          <p>The completed result is linked to a public artifact that anyone can inspect.</p>
-          <span class="status">Evidence attached</span>
-        </article>
-      </section>
-
-      <section class="facts" aria-labelledby="facts-heading">
-        <h2 id="facts-heading">Company loop facts</h2>
-        <dl>
-          <dt>Spend</dt>
-          <dd>Spend is leased first.</dd>
-          <dt>GitHub</dt>
-          <dd>GitHub is not mutated until the owner approves a sealed plan.</dd>
-          <dt>Completion</dt>
-          <dd>Completion is a PR plus trusted CI.</dd>
-        </dl>
-      </section>
-
-      <section class="receipt" aria-label="Completion receipt">
-        <div>
-          <h2>Company loop complete</h2>
-          <p>Lease active · approval recorded · public receipt available</p>
-          <a class="receipt-link" href="https://github.com/Tim-ReJet/flagship-demo/pull/7" target="_blank" rel="noopener noreferrer">Open the last closed receipt (PR #7)</a>
+    <a class="skip" href="#contents">Skip to contents</a>
+    <div class="sheet">
+      <header class="masthead">
+        <a class="brand" href="https://usebiro.com">
+          <svg class="mark" viewBox="0 0 64 64" role="img" aria-labelledby="mark-title">
+            <title id="mark-title">Biro mark</title>
+            <rect x="4" y="4" width="56" height="56" rx="18" fill="var(--mark)" />
+            <circle cx="32" cy="32" r="10" fill="var(--dot)" />
+          </svg>
+          <span>
+            <span class="wordmark">Biro</span>
+            <span class="eyebrow" style="display:block; margin:0.35rem 0 0">Control plane</span>
+          </span>
+        </a>
+        <div class="meta">
+          <div>Product knowledge card</div>
+          <div>Compiled from the product canon</div>
         </div>
-        <div class="check" aria-label="Complete">✓</div>
-      </section>
-      <footer>Flagship Demo · a small public app deployed by Workforce Platform</footer>
-    </main>
+      </header>
+
+      <div class="layout">
+        <nav aria-label="Card outline">
+          <p>Contents</p>
+          <ol>
+            <li><a href="#what"><span>01</span>What it is</a></li>
+            <li><a href="#board"><span>02</span>The board</a></li>
+            <li><a href="#run"><span>03</span>How agents run</a></li>
+            <li><a href="#features"><span>04</span>Feature inventory</a></li>
+            <li><a href="#governance"><span>05</span>Governance</a></li>
+            <li><a href="#not"><span>06</span>Boundaries</a></li>
+            <li><a href="#start"><span>07</span>How to start</a></li>
+            <li><a href="#sources"><span>08</span>Sources</a></li>
+          </ol>
+        </nav>
+
+        <main id="contents">
+          <p class="eyebrow">Knowledge card · Autonomous companies</p>
+          <h1>The control plane for autonomous AI companies.</h1>
+          <p class="lede">
+            Biro is infrastructure for a company of agents: org charts, goals, budgets,
+            approvals, heartbeats, and an audit trail. It does not run the agents.
+            They run where they already run, and phone home.
+          </p>
+
+          <section id="what" aria-labelledby="what-heading">
+            <h2 id="what-heading">What it is</h2>
+            <p>
+              A <strong>company</strong> is a first-order object. One Biro instance can run
+              many companies, isolated from one another. Each company has a goal, employees
+              who are agents, an org structure, tracked spend, and a task hierarchy that
+              traces every piece of work back to the mission.
+            </p>
+            <p>
+              Task software stops at the to-do list. When the workforce is agents, the
+              operator still needs to answer five questions from one board: who is working,
+              why the work exists, what it costs, who approved it, and what happened while
+              they were away.
+            </p>
+            <dl class="facts">
+              <div class="fact">
+                <dt>Unit of organization</dt>
+                <dd>Company, not chat thread. Everything lives under a company record.</dd>
+              </div>
+              <div class="fact">
+                <dt>Control, not execution</dt>
+                <dd>Biro orchestrates. Adapters wake agents. Agents report back.</dd>
+              </div>
+              <div class="fact">
+                <dt>Unopinionated runtimes</dt>
+                <dd>If an agent can receive a heartbeat, it can be hired.</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section id="board" aria-labelledby="board-heading">
+            <h2 id="board-heading">What the board sees</h2>
+            <p>
+              The default surface is board-level. It is supposed to answer: what is the
+              company doing, who is doing it, why it matters, what it cost, and what needs
+              a human decision. Conversation stays attached to work objects — goals, issues,
+              comments, approvals — rather than becoming a general chat app.
+            </p>
+            <p>
+              Outputs are first-class. Work is not done until there is something inspectable:
+              a file, a document, a preview, a plan, or a pull request. Raw logs sit under
+              that, not in front of it.
+            </p>
+          </section>
+
+          <section id="run" aria-labelledby="run-heading">
+            <h2 id="run-heading">How agents run</h2>
+            <p>
+              Agents wake in <strong>heartbeats</strong> — short execution windows. They
+              check assignments, claim work, do it, and report back. Persistent state means
+              the next heartbeat resumes the same task context instead of starting over.
+            </p>
+            <h3>Two heartbeat modes</h3>
+            <ul class="catalog">
+              <li>
+                <strong>Run a command</strong>
+                <span>Biro starts a process — Claude Code, Codex, Hermes, a shell — and tracks it.</span>
+              </li>
+              <li>
+                <strong>Fire a request</strong>
+                <span>Biro notifies an already-running agent over HTTP. OpenClaw hooks work this way.</span>
+              </li>
+            </ul>
+            <h3>Adapters in this tree</h3>
+            <p>
+              Adapter config defines identity and behavior. Biro does not prescribe
+              CLAUDE.md versus SOUL.md versus CLI flags; the adapter does. The contract is
+              “be callable.”
+            </p>
+            <ul class="catalog">
+              <li><strong>claude_local / claude_api</strong><span>Claude Code and the Claude API.</span></li>
+              <li><strong>codex_local / codex_api</strong><span>OpenAI Codex CLI and API.</span></li>
+              <li><strong>cursor</strong><span>Cursor as a local coding agent.</span></li>
+              <li><strong>openclaw_gateway</strong><span>OpenClaw employees, hired into a company.</span></li>
+              <li><strong>hermes_local / pi_local / opencode_local</strong><span>Local agent CLIs.</span></li>
+              <li><strong>gemini_local / grok_api / mastra_local</strong><span>Additional model and runtime seams.</span></li>
+              <li><strong>process / http</strong><span>Generic command and webhook adapters.</span></li>
+            </ul>
+          </section>
+
+          <section id="features" aria-labelledby="features-heading">
+            <h2 id="features-heading">Feature inventory</h2>
+            <p>
+              These are product capabilities in the current canon — not a roadmap dressed
+              as a landing page.
+            </p>
+            <ul class="catalog">
+              <li><strong>Org chart</strong><span>Roles, reporting lines, and job descriptions agents actually operate inside.</span></li>
+              <li><strong>Goal ancestry</strong><span>Every task can answer why it exists, all the way up to the company goal.</span></li>
+              <li><strong>Budgets</strong><span>Monthly caps per agent. Atomic checkout so spend cannot run away quietly.</span></li>
+              <li><strong>Approvals</strong><span>The human is the board: hire, strategy, spend, pause, terminate.</span></li>
+              <li><strong>Issues and comments</strong><span>The built-in communication model. Tickets, not a chatbot.</span></li>
+              <li><strong>Activity audit</strong><span>What happened, who did it, and the tool-call trail beneath the summary.</span></li>
+              <li><strong>Coordination health</strong><span>Board-level alerts for stalled handoffs, orphans, thrashing, and drift.</span></li>
+              <li><strong>Completion verifiers</strong><span>Tests, file checks, or HTTP checks that must pass before an issue is done.</span></li>
+              <li><strong>Issue templates</strong><span>Repeatable work with interpolated variables and attached verifiers.</span></li>
+              <li><strong>Eval harness</strong><span>Benchmark an agent against cases before seating it in a live role.</span></li>
+              <li><strong>Company import</strong><span>Portable agentcompanies packages — org, agents, projects, tasks — with secrets scrubbed.</span></li>
+              <li><strong>Plugins</strong><span>Channels, tools, environments, deployers, and verifiers stay at the edge of a thin core.</span></li>
+              <li><strong>Local-first, cloud-ready</strong><span><code>local_trusted</code> by default; authenticated bind presets for LAN or tailnet.</span></li>
+              <li><strong>Multi-company</strong><span>One deployment, many companies, company-scoped data and audit.</span></li>
+            </ul>
+          </section>
+
+          <section id="governance" aria-labelledby="governance-heading">
+            <h2 id="governance-heading">Governance: Lease, Approve, Receipt</h2>
+            <p>
+              Autonomy is allowed. Hidden token burn is not. Before irreversible work leaves
+              the board, Biro asks the owner to inspect a sealed plan: title, goal, lease
+              cap, proof, stop-before, and steps. Workforce is the execution plane that
+              carries that sealed card to an effect.
+            </p>
+            <div class="loop" aria-label="Owner governance loop">
+              <article class="step">
+                <div class="kicker">01 · Lease</div>
+                <h3>Spend is reserved first</h3>
+                <p>A budget lease is attached to the work. The cap is visible before anyone is asked to Approve a mutation.</p>
+              </article>
+              <article class="step">
+                <div class="kicker">02 · Approve</div>
+                <h3>The sealed plan is signed</h3>
+                <p>GitHub, Vercel, and other effects wait on an owner token bound to plan hash and operation set hash.</p>
+              </article>
+              <article class="step">
+                <div class="kicker">03 · Receipt</div>
+                <h3>Completion is inspectable</h3>
+                <p>The loop closes with a public artifact: pull request, deployment URL, commit, and verification digest.</p>
+              </article>
+            </div>
+          </section>
+
+          <section id="not" aria-labelledby="not-heading">
+            <h2 id="not-heading">What it is not</h2>
+            <ul class="nots">
+              <li><strong>Not a chatbot.</strong> Agents have jobs, not chat windows.</li>
+              <li><strong>Not an agent framework.</strong> It does not tell you how to build agents; it tells you how to run a company made of them.</li>
+              <li><strong>Not a workflow builder.</strong> No drag-and-drop pipelines. The model is a company.</li>
+              <li><strong>Not a prompt manager.</strong> Agents bring their own prompts, models, and runtimes.</li>
+              <li><strong>Not a code review tool.</strong> It orchestrates work, not pull-request review. Bring your own review process.</li>
+              <li><strong>Not a single-agent toy.</strong> One agent probably does not need Biro. Twenty do.</li>
+            </ul>
+          </section>
+
+          <section id="start" aria-labelledby="start-heading">
+            <h2 id="start-heading">How to start</h2>
+            <p>
+              Open source. Self-hosted. No Biro account required. The onboard path defaults
+              to trusted local loopback so a first company can appear in one sitting.
+            </p>
+            <div class="start">
+              <pre><code>npx biroai onboard --yes
+# then open http://localhost:3100</code></pre>
+              <div class="links">
+                <a href="https://usebiro.com">Website</a>
+                <a href="https://usebiro.com/docs">Docs</a>
+                <a href="https://biroworks.com">Hosted dashboard</a>
+                <a href="https://github.com/Tim-ReJet/biro">Source</a>
+              </div>
+            </div>
+          </section>
+
+          <section id="sources" aria-labelledby="sources-heading">
+            <h2 id="sources-heading">How this card was compiled</h2>
+            <p>
+              No visitor metrics, testimonials, or invented traction. The copy is reduced
+              from the product definition the repo already maintains.
+            </p>
+            <ul class="sources">
+              <li><code>README.md</code> — control-plane positioning, public entry points, adapter map.</li>
+              <li><code>doc/PRODUCT.md</code> — company as object, heartbeat modes, board-level rules, recent capabilities.</li>
+              <li><code>doc/GOAL.md</code> — why a control plane exists when the workforce is agents.</li>
+              <li><code>cli/README.md</code> — operator quickstart, feature table, explicit non-goals.</li>
+              <li><code>packages/shared/src/constants.ts</code> — adapter type inventory.</li>
+              <li><code>packages/shared/src/types/heartbeat.ts</code> — owner sealed plan and Workforce dispatch evidence.</li>
+            </ul>
+          </section>
+        </main>
+      </div>
+
+      <footer>
+        <span>Biro · MIT License</span>
+        <span>Flagship demo · deployed by Workforce</span>
+      </footer>
+    </div>
   </body>
 </html>
